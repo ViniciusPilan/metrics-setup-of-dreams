@@ -14,23 +14,6 @@ spec:
     - repoURL: https://github.com/ViniciusPilan/metrics-setup-of-dreams.git
       targetRevision: v1
       ref: values
-    
-    # Mimir
-    # - repoURL: https://grafana.github.io/helm-charts
-    #   chart: mimir-distributed
-    #   targetRevision: 6.0.6
-    #   helm:
-    #     valueFiles:
-    #       - $values/mimir/values.yaml
-
-    # Grafana
-    - repoURL: ghcr.io/grafana-community/helm-charts
-      chart: grafana
-      targetRevision: 12.1.1
-      helm:
-        releaseName: grafana
-        valueFiles:
-          - $values/grafana/values.yaml
 
     # Prometheus
     - repoURL: ghcr.io/prometheus-community/charts
