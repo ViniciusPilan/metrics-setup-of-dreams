@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: mimir-distributed
+  name: metrics-tools
   namespace: argocd
 spec:
   project: default
@@ -11,7 +11,7 @@ spec:
     namespace: metrics
 
   sources:
-    - repoURL: https://github.com/ViniPilan/metrics-setup-of-dreams.git
+    - repoURL: https://github.com/ViniciusPilan/metrics-setup-of-dreams.git
       targetRevision: v1
       ref: values
     
@@ -24,10 +24,11 @@ spec:
     #       - $values/mimir/values.yaml
 
     # Prometheus
-    - repoURL: https://github.com/prometheus-operator/kube-prometheus
+    - repoURL: ghcr.io/prometheus-community/charts
       chart: kube-prometheus-stack
       targetRevision: 83.6.0
       helm:
+        releaseName: prometheus
         valueFiles:
           - $values/prometheus/base.yaml
           - $values/prometheus/values.yaml
