@@ -28,7 +28,7 @@ spec:
       chart: kube-prometheus-stack
       targetRevision: 83.6.0
       helm:
-        releaseName: prometheus
+        # releaseName: prometheus
         valueFiles:
           - $values/prometheus/base.yaml
           - $values/prometheus/values.yaml
