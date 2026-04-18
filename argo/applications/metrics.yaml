@@ -23,12 +23,19 @@ spec:
     #     valueFiles:
     #       - $values/mimir/values.yaml
 
+    # Grafana
+    - repoURL: ghcr.io/grafana-community/helm-charts
+      chart: grafana
+      targetRevision: 12.1.1
+      helm:
+        valueFiles:
+          - $values/grfana/values.yaml
+
     # Prometheus
     - repoURL: ghcr.io/prometheus-community/charts
       chart: kube-prometheus-stack
       targetRevision: 83.6.0
       helm:
-        # releaseName: prometheus
         valueFiles:
           - $values/prometheus/base.yaml
           - $values/prometheus/values.yaml
