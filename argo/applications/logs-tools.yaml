@@ -1,0 +1,51 @@
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: logs-tools
+#   namespace: argocd
+# spec:
+#   project: default
+
+#   destination:
+#     server: https://kubernetes.default.svc
+#     namespace: metrics
+
+#   sources:
+#     - repoURL: https://github.com/ViniciusPilan/metrics-setup-of-dreams.git
+#       targetRevision: v1
+#       ref: values
+
+#     # Prometheus
+#     - repoURL: ghcr.io/prometheus-community/charts
+#       chart: kube-prometheus-stack
+#       targetRevision: 83.6.0
+#       helm:
+#         valueFiles:
+#           - $values/prometheus/base.yaml
+#           - $values/prometheus/values.yaml
+
+#     # Prometheus Operator
+#     - repoURL: ghcr.io/prometheus-community/charts
+#       chart: kube-prometheus-stack
+#       targetRevision: 83.6.0
+#       helm:
+#         # releaseName: prometheus
+#         valueFiles:
+#           - $values/prometheus-operator/base.yaml
+#           - $values/prometheus-operator/values.yaml
+
+#     # Kube state metrics
+
+#     # Grafana Alloy
+
+#     # Alertmanager
+
+#     # Node Exporter
+
+
+#   syncPolicy:
+#     # automated:
+#     #   prune: true
+#     #   selfHeal: true
+#     syncOptions:
+#       - CreateNamespace=true

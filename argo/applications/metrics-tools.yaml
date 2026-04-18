@@ -34,6 +34,15 @@ spec:
           - $values/prometheus-operator/base.yaml
           - $values/prometheus-operator/values.yaml
 
+    # Kube state metrics
+
+    # Grafana Alloy
+
+    # Alertmanager
+
+    # Node Exporter
+
+
   syncPolicy:
     # automated:
     #   prune: true
