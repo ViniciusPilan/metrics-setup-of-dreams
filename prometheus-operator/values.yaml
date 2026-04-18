@@ -8,11 +8,7 @@ prometheusOperator:
 
   ## Number of old replicasets to retain ##
   ## The default value is 10, 0 will garbage-collect old replicasets ##
-  revisionHistoryLimit: 10
-
-  ## Strategy of the deployment
-  ##
-  strategy: {}
+  revisionHistoryLimit: 2
 
   ## Prometheus-Operator v0.39.0 and later support TLS natively.
   ##
@@ -79,7 +75,7 @@ prometheusOperator:
 
       ## Number of replicas
       ##
-      replicas: 1
+      replicas: 2
 
       ## Strategy of the deployment
       ##
