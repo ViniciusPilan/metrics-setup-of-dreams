@@ -28,6 +28,7 @@ spec:
       chart: grafana
       targetRevision: 12.1.1
       helm:
+        releaseName: grafana
         valueFiles:
           - $values/grafana/values.yaml
 
