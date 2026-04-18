@@ -33,6 +33,16 @@ spec:
           - $values/prometheus/base.yaml
           - $values/prometheus/values.yaml
 
+    # Prometheus Operator
+    - repoURL: ghcr.io/prometheus-community/charts
+      chart: kube-prometheus-stack
+      targetRevision: 83.6.0
+      helm:
+        # releaseName: prometheus
+        valueFiles:
+          - $values/prometheus-operator/base.yaml
+          - $values/prometheus-operator/values.yaml
+
   syncPolicy:
     # automated:
     #   prune: true
