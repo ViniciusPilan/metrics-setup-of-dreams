@@ -1,3 +1,5 @@
+fullnameOverride: "prometheus"
+
 prometheus:
   enabled: true
 
