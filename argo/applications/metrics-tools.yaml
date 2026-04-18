@@ -42,6 +42,10 @@ spec:
 
     # Node Exporter
 
+    # Push Gateway
+
+    # BlackBox Exporter
+
 
   syncPolicy:
     # automated:
