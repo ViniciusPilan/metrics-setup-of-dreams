@@ -82,7 +82,7 @@ prometheusOperator:
 
       ## Number of replicas
       ##
-      replicas: 2
+      replicas: 1
 
       ## Strategy of the deployment
       ##
