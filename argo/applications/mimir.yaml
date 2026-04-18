@@ -23,6 +23,12 @@ spec:
         valueFiles:
           - $values/mimir/values.yaml
 
+    # Minio
+
+    # ETCD
+
+    # Kakfa
+
   syncPolicy:
     # automated:
     #   prune: true
