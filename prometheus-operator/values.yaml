@@ -1,5 +1,8 @@
 fullnameOverride: "prometheus-operator"
 
+crds:
+  enabled: true
+
 prometheusOperator:
   enabled: true
 
