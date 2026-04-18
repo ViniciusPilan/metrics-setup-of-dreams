@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mimir-distributed
+  namespace: argocd
+spec:
+  project: default
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: metrics
+
+  sources:
+    - repoURL: https://github.com/ViniPilan/metrics-setup-of-dreams.git
+      targetRevision: v1
+      ref: values
+    
+    # Mimir
+    # - repoURL: https://grafana.github.io/helm-charts
+    #   chart: mimir-distributed
+    #   targetRevision: 6.0.6
+    #   helm:
+    #     valueFiles:
+    #       - $values/mimir/values.yaml
+
+    # Prometheus
+    - repoURL: https://github.com/prometheus-operator/kube-prometheus
+      chart: kube-prometheus-stack
+      targetRevision: 83.6.0
+      helm:
+        valueFiles:
+          - $values/prometheus/base.yaml
+          - $values/prometheus/values.yaml
+
+  syncPolicy:
+    # automated:
+    #   prune: true
+    #   selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
