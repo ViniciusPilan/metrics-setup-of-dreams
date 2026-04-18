@@ -29,7 +29,7 @@ spec:
       targetRevision: 12.1.1
       helm:
         valueFiles:
-          - $values/grfana/values.yaml
+          - $values/grafana/values.yaml
 
     # Prometheus
     - repoURL: ghcr.io/prometheus-community/charts
