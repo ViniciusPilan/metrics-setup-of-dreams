@@ -20,5 +20,6 @@ spec:
       chart: garage-operator
       targetRevision: 0.3.8
       helm:
+        releaseName: garage
         valueFiles:
           - $values/cluster-tools/general/garage/values.yaml
