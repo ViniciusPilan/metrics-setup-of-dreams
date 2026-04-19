@@ -1,9 +1,10 @@
+# https://github.com/derailed/popeye#in-cluster
 apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: popeye
 spec:
-  schedule: "* */1 * * *" # Fire off Popeye once an hour
+  schedule: "* * */30 * *" # Fire off Popeye once an hour
   concurrencyPolicy: Forbid
   jobTemplate:
     spec:
@@ -19,6 +20,8 @@ spec:
                 - -o
                 - yaml
                 - --force-exit-zero
+                - --push-gtwy-url
+                - http://push-gateway.metrics.svc:9090
               resources:
                 limits:
                   cpu:    500m
