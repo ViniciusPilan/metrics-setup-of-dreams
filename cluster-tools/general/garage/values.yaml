@@ -71,23 +71,15 @@ resources: {}
 
 monitoring:
   metrics:
-    # -- If true, a service for monitoring is created with a prometheus.io/scrape annotation
     enabled: true
     serviceMonitor:
-      # -- If true, a ServiceMonitor CRD is created for a prometheus operator
-      # https://github.com/coreos/prometheus-operator
       enabled: true
       path: /metrics
-      #  namespace: monitoring  (defaults to use the namespace this chart is deployed to)
-      labels: {}
-      interval: 15s
+      interval: 30s
       scheme: http
       tlsConfig: {}
       scrapeTimeout: 10s
       relabelings: []
-  tracing:
-    # -- specify a sink endpoint for OpenTelemetry Traces, eg. `http://localhost:4317`
-    sink: ""
 
 # Garage configuration. These values go to garage.toml
 garage:
