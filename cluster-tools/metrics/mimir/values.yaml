@@ -472,7 +472,7 @@ kedaAutoscaling:
     #   name: my-secret-name
     #   parameter: password
 alertmanager:
-  enabled: true
+  enabled: false
   # -- Total number of replicas for the alertmanager across all availability zones
   # If alertmanager.zoneAwareReplication.enabled=false, this number is taken as is.
   # Otherwise each zone starts `ceil(replicas / number_of_zones)` number of pods.
@@ -1278,7 +1278,7 @@ overrides_exporter:
   extraEnvFrom: []
 
 ruler:
-  enabled: true
+  enabled: false
 
   # -- Allows to override the container image of the ruler component.
   # When set it takes precedence over what is defined in global "image".
