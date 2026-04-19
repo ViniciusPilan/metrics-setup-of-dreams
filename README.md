@@ -7,6 +7,7 @@ https://github.com/ViniciusPilan/metrics-setup-of-dreams
 - [ ] NGINX
 - [x] Garage
 - [ ] Srimzi
+- [ ] GatewayAPI
 
 ### Monitoring and Observability
 - [x] Prometheus Operator
