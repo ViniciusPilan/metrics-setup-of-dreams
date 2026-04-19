@@ -1,5 +1,8 @@
 # Ref: 
 # Default values for kube-state-metrics.
+
+fullnameOverride: kube-state-metrics
+
 prometheusScrape: true
 image:
   registry: registry.k8s.io
