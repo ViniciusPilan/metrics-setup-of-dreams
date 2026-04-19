@@ -158,7 +158,7 @@ extraObjects:
         factor: 3
       storage:
         data:
-          size: 100Gi
+          size: 10Gi
       network:
         rpcBindPort: 3901
         service:
