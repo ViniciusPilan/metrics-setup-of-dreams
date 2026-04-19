@@ -15,6 +15,14 @@ spec:
       targetRevision: v1
       ref: values
 
+    # Node exporter
+    - repoURL: ghcr.io/prometheus-community/charts
+      chart: prometheus-node-exporter
+      targetRevision: 4.53.1
+      helm:
+        valueFiles:
+          - $values/cluster-tools/metrics/node-exporter/values.yaml
+
     # Prometheus
     - repoURL: ghcr.io/prometheus-community/charts
       chart: kube-prometheus-stack
