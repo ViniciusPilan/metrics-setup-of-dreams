@@ -33,3 +33,4 @@ https://github.com/ViniciusPilan/metrics-setup-of-dreams
 5. NGINX
 6. BlackBox exporter 
 7. Dashboards
+8. Gateway API
