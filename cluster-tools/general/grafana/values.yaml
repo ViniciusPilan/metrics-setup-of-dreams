@@ -691,7 +691,7 @@ datasources:
      isDefault: false
    - name: Mimir
      type: prometheus
-     url: http://mimir-gateway.metrics.svc:8080
+     url: http://mimir-gateway.metrics.svc:8080/prometheus
      access: proxy
      isDefault: true
 
