@@ -1,159 +1,260 @@
-# Ref: https://git.deuxfleurs.fr/Deuxfleurs/garage/src/branch/main-v2/script/helm/garage/values.yaml
+# Ref: https://github.com/rajsinghtech/garage-operator/blob/main/charts/garage-operator/values.yaml
 
-fullnameOverride: ""
+# Default values for garage-operator
+# This is a YAML-formatted file.
 
-commonLabels:
-  app: garage
-
-# Deployment configuration
-deployment:
-  # -- Switchable to DaemonSet
-  kind: StatefulSet
-  # -- Number of StatefulSet replicas/garage nodes to start
-  replicaCount: 3
-  # -- If using statefulset, allow Parallel or OrderedReady (default)
-  podManagementPolicy: OrderedReady
+# -- Number of operator replicas (typically 1 with leader election)
+replicaCount: 1
 
 image:
-  # -- default to amd64 docker image
-  repository: dxflrs/amd64_garage
-  # -- set the image tag, please prefer using the chart version and not this
-  # to avoid compatibility issues
+  # -- Container image repository
+  repository: ghcr.io/rajsinghtech/garage-operator
+  # -- Image pull policy
+  pullPolicy: IfNotPresent
+  # -- Overrides the image tag (default is the chart appVersion)
   tag: ""
-  pullPolicy: IfNotPresent
 
-initImage:
-  repository: busybox
-  tag: stable
-  pullPolicy: IfNotPresent
+# -- Default Garage container image for clusters that don't specify one.
+# When set, all GarageCluster/GarageNode CRs that omit spec.image will use this image.
+# Useful for environments that can only pull from a specific registry.
+# Example: "registry.example.com/garage:v2.2.0"
+defaultGarageImage: ""
+
+# -- Image pull secrets for private registries
+imagePullSecrets: []
+# -- Override the chart name
+nameOverride: ""
+# -- Override the full name
+fullnameOverride: ""
 
 serviceAccount:
+  # -- Create a ServiceAccount
   create: true
+  # -- Annotations to add to the ServiceAccount
+  annotations: {}
+  # -- ServiceAccount name (generated if not set and create is true)
+  name: ""
 
+# -- Pod annotations
+podAnnotations: {}
+
+# -- Pod labels
+podLabels: {}
+
+# Pod security context
 podSecurityContext:
-  runAsUser: 1000
-  runAsGroup: 1000
-  fsGroup: 1000
-  fsGroupChangePolicy: "OnRootMismatch"
+  # -- Run as non-root user
   runAsNonRoot: true
+  # -- Seccomp profile type
+  seccompProfile:
+    type: RuntimeDefault
 
+# Container security context
 securityContext:
-  # -- The default security context is heavily restricted,
-  # feel free to tune it to your requirements
+  # -- Read-only root filesystem
+  readOnlyRootFilesystem: true
+  # -- Disallow privilege escalation
+  allowPrivilegeEscalation: false
+  # -- Drop all capabilities
   capabilities:
     drop:
-      - ALL
-  readOnlyRootFilesystem: true
+      - "ALL"
 
-service:
-  # -- You can rely on any service to expose your cluster
-  # - ClusterIP (+ Ingress)
-  # - NodePort (+ Ingress)
-  # - LoadBalancer
-  type: ClusterIP
-  # -- Annotations to add to the service
-  annotations: {}
-  s3:
-    api:
-      port: 3900
-    web:
-      port: 3902
-    # NOTE: the admin API is excluded for now as it is not consistent across nodes
+# Resource requests and limits
+# Note: 256Mi is recommended for stable operation. Lower values (128Mi) may cause
+# OOM issues during certificate generation or when managing many resources.
+resources:
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 10m
+    memory: 128Mi
 
-resources: {}
-  # The following are indicative for a small-size deployment, for anything serious double them.
-  # limits:
-  #   cpu: 100m
-  #   memory: 1024Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 512Mi
-
-monitoring:
-  metrics:
-    enabled: true
-    serviceMonitor:
-      enabled: true
-      path: /metrics
-      interval: 30s
-      scheme: http
-      tlsConfig: {}
-      scrapeTimeout: 10s
-      relabelings: []
-
-# Garage configuration. These values go to garage.toml
-garage:
-  # -- Can be changed for better performance on certain systems
-  # https://garagehq.deuxfleurs.fr/documentation/reference-manual/configuration/#db_engine
-  dbEngine: "lmdb"
-
-  # -- Defaults is 1MB
-  # An increase can result in better performance in certain scenarios
-  # https://garagehq.deuxfleurs.fr/documentation/reference-manual/configuration/#block_size
-  blockSize: "1048576"
-
-  # -- Default to 3 replicas, see the replication_factor section at
-  # https://garagehq.deuxfleurs.fr/documentation/reference-manual/configuration/#replication_factor
-  replicationFactor: "3"
-
-  # -- By default, enable read-after-write consistency guarantees, see the consistency_mode section at
-  # https://garagehq.deuxfleurs.fr/documentation/reference-manual/configuration/#consistency_mode
-  consistencyMode: "consistent"
-
-  # -- zstd compression level of stored blocks
-  # https://garagehq.deuxfleurs.fr/documentation/reference-manual/configuration/#compression_level
-  compressionLevel: "1"
-
-  # -- If this value is set, Garage will automatically take a snapshot of the metadata DB file at a regular interval and save it in the metadata directory.
-  # https://garagehq.deuxfleurs.fr/documentation/reference-manual/configuration/#metadata_auto_snapshot_interval
-  metadataAutoSnapshotInterval: ""
-
-  rpcBindAddr: "[::]:3901"
-  # -- If not given, a random secret will be generated and stored in a Secret object
-  rpcSecret: ""
-  # -- If you want to provide an rpcSecret within an existing k8s secret,
-  # specify the secret name here, and store the value under the secret key `rpcSecret`
-  # the default secret will not be created
-  existingRpcSecret: ""
-  # -- This is not required if you use the integrated kubernetes discovery
-  bootstrapPeers: []
-  # -- Set to true if you want to use k8s discovery but install the CRDs manually outside
-  # of the helm chart, for example if you operate at namespace level without cluster resources
-  kubernetesSkipCrd: false
-  s3:
-    api:
-      region: "garage"
-      rootDomain: ".s3.garage.tld"
-    web:
-      rootDomain: ".web.garage.tld"
-      index: "index.html"
-
-  # -- Additional configuration to append to garage.toml. Use a multi-line string for custom config.
-  # Example:
-  #  additionalTopLevelConfig: |-
-  #    data_fsync = true
-  additionalTopLevelConfig: ""
-
-  # -- if not empty string, allow using an existing ConfigMap for the garage.toml,
-  # if set, ignores garage.toml
-  existingConfigMap: ""
-
-  # -- String Template for the garage configuration
-  # if set, ignores above values.
-  # Values can be templated,
-  # see https://garagehq.deuxfleurs.fr/documentation/reference-manual/configuration/
-  garageTomlString: ""
-
-# Data persistence
-persistence:
+# Leader election configuration
+leaderElection:
+  # -- Enable leader election for HA deployments
   enabled: true
-  meta:
-    # storageClass: "fast-storage-class"
-    size: 100Mi
-    # used only for daemon sets
-    hostPath: /var/lib/garage/meta
-  data:
-    # storageClass: "slow-storage-class"
-    size: 100Mi
-    # used only for daemon sets
-    hostPath: /var/lib/garage/data
+
+# Health probes configuration
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: 8081
+  initialDelaySeconds: 15
+  periodSeconds: 20
+
+readinessProbe:
+  httpGet:
+    path: /readyz
+    port: 8081
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+# Metrics configuration
+metrics:
+  # -- Enable metrics endpoint
+  enabled: true
+  # -- Metrics bind address (port)
+  bindAddress: ":8443"
+  service:
+    # -- Create metrics service
+    enabled: true
+    # -- Metrics service type
+    type: ClusterIP
+    # -- Metrics service port
+    port: 8443
+
+# ServiceMonitor for Prometheus Operator
+serviceMonitor:
+  # -- Create ServiceMonitor resource
+  enabled: true
+  # -- Additional labels for ServiceMonitor
+  labels: {}
+  # -- Metrics scrape interval
+  interval: 30s
+  # -- Metrics scrape timeout
+  scrapeTimeout: 10s
+  # -- Use HTTPS for scraping
+  scheme: https
+  # -- TLS configuration for metrics endpoint
+  tlsConfig:
+    insecureSkipVerify: true
+  # -- Namespace for ServiceMonitor (defaults to release namespace)
+  namespace: ""
+
+# Grafana dashboard ConfigMap for the official Garage Prometheus dashboard.
+# Uses the Grafana sidecar pattern — label the ConfigMap so Grafana auto-discovers it.
+grafanaDashboard:
+  # -- Create a ConfigMap containing the Garage Grafana dashboard JSON.
+  enabled: false
+  # -- Labels added to the ConfigMap. Set to match your Grafana sidecar's discovery label.
+  labels:
+    grafana_dashboard: "1"
+  # -- Namespace to create the ConfigMap in (defaults to release namespace).
+  namespace: ""
+
+# PrometheusRules for alerting on GarageCluster health
+prometheusRules:
+  # -- Create PrometheusRule resources with Garage alerting rules.
+  # Requires prometheus-operator to be installed.
+  enabled: false
+  # -- Additional labels added to PrometheusRule metadata
+  labels: {}
+  # -- Namespace to create PrometheusRule in (defaults to release namespace)
+  namespace: ""
+
+# Network policy configuration
+networkPolicy:
+  # -- Create NetworkPolicy to protect metrics endpoint
+  enabled: false
+  # -- Label selector for namespaces allowed to access metrics
+  allowedNamespaceSelector:
+    matchLabels:
+      metrics: enabled
+
+# Webhook configuration (requires cert-manager)
+webhooks:
+  # -- Enable admission webhooks
+  enabled: false
+  # -- Failure policy for webhooks (Fail or Ignore)
+  failurePolicy: Fail
+  # Certificate configuration for webhooks
+  certManager:
+    # -- Use cert-manager for webhook certificates
+    enabled: true
+    # -- Duration of webhook certificates
+    duration: 8760h  # 1 year
+    # -- Renew certificates before expiry
+    renewBefore: 720h  # 30 days
+    # -- Issuer kind (Issuer or ClusterIssuer)
+    issuerKind: Issuer
+    # -- Issuer name (creates self-signed if empty)
+    issuerName: ""
+
+# Node selector for operator pods
+nodeSelector: {}
+
+# Tolerations for operator pods
+tolerations: []
+
+# Affinity rules for operator pods
+affinity: {}
+
+# -- Pod topology spread constraints
+topologySpreadConstraints: []
+
+# -- Priority class name
+priorityClassName: ""
+
+# -- Termination grace period in seconds
+terminationGracePeriodSeconds: 10
+
+# CRD installation
+crds:
+  # -- Install CRDs with Helm
+  install: true
+  # -- Keep CRDs on chart uninstall
+  keep: true
+  # -- Annotations for CRDs
+  annotations: {}
+
+# RBAC configuration
+rbac:
+  # -- Create RBAC resources
+  create: true
+
+# -- Operator log level. Valid values: debug, info, error.
+# warn/warning are accepted as aliases and silently mapped to error —
+# controller-runtime's zap logger does not expose a warn level as a named string.
+# Note: positive integers are V-levels (more verbose), not severity levels.
+# Maps to --zap-log-level flag (controller-runtime zap logger).
+logLevel: info
+
+# -- Kubernetes cluster domain used for service FQDNs.
+# Override when your cluster uses a custom domain (e.g., eu-cluster.local, as-cluster.local).
+clusterDomain: cluster.local
+
+# Namespace scoping
+# -- List of namespaces to watch (empty means all namespaces, cluster-scoped).
+# When set, the operator only watches the listed namespaces (plus the release namespace)
+# and uses namespace-scoped Roles instead of ClusterRoles.
+# CRDs must still be installed by a cluster admin.
+watchNamespaces: []
+# -- Force cluster-wide watching even when watchNamespaces is set.
+# Only meaningful when watchNamespaces is non-empty; otherwise has no effect.
+watchAnyNamespace: false
+
+# COSI (Container Object Storage Interface) driver configuration
+cosi:
+  # -- Enable COSI driver for Kubernetes-native object storage provisioning
+  enabled: false
+  # -- COSI driver name (must match BucketClass/BucketAccessClass driverName)
+  driverName: garage.rajsingh.info
+  # -- COSI socket path
+  socketPath: /var/lib/cosi/cosi.sock
+  # -- Namespace for shadow resources (defaults to release namespace)
+  namespace: ""
+  # COSI sidecar configuration
+  sidecar:
+    # -- COSI sidecar image (from gcr.io/k8s-staging-sig-storage)
+    image: gcr.io/k8s-staging-sig-storage/objectstorage-sidecar:latest
+    # -- COSI sidecar image pull policy
+    pullPolicy: IfNotPresent
+    # -- Resource requests and limits for sidecar
+    resources:
+      limits:
+        cpu: 100m
+        memory: 64Mi
+      requests:
+        cpu: 10m
+        memory: 32Mi
+
+# -- Extra Kubernetes objects to deploy with the chart (supports templating)
+extraObjects: []
+# - apiVersion: v1
+#   kind: Secret
+#   metadata:
+#     name: garage-rpc-secret
+#   stringData:
+#     rpc-secret: "{{ .Values.myRpcSecret }}"

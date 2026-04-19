@@ -16,9 +16,8 @@ spec:
       ref: values
 
     # Garage
-    - repoURL: 'https://git.deuxfleurs.fr/Deuxfleurs/garage.git'
-      targetRevision: main-v2
-      path: script/helm/garage
+    - repoURL: 'ghcr.io/rajsinghtech/charts/garage-operator'
+      targetRevision: 0.3.8
       helm:
         valueFiles:
           - $values/cluster-tools/general/garage/values.yaml
