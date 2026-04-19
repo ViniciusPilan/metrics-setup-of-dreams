@@ -616,8 +616,9 @@ prometheus:
 
     ## The remote_write spec configuration for Prometheus.
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api-reference/api.md#remotewritespec
-    remoteWrite: []
-    # - url: http://remote1/push
+    remoteWrite:
+    - url: http://rmimir-gateway.metrics.svc:8080/push
+
     ## additionalRemoteWrite is appended to remoteWrite
     additionalRemoteWrite: []
 
