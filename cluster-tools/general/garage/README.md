@@ -1,3 +1,5 @@
+
+# Requirements to Garage work fine
 Ref: https://github.com/rajsinghtech/garage-operator/blob/main/README.md#quick-start
 
 To type in terminal (required):
@@ -15,4 +17,10 @@ kind: Secret
 metadata:
   creationTimestamp: null
   name: garage-admin-token
+```
+
+# To test Garage bucket
+```sh
+kubectl get secret mimir-key -o yaml | yq .data.access-key-id | base64 -d
+kubectl get secret mimir-key -o yaml | yq .data.secret-access-key | base64 -d
 ```
