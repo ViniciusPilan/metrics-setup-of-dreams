@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Refs: https://argo-cd.readthedocs.io/en/stable/operator-manual/installation/
+
 cd "$(dirname "$0")"
 
 echo "########## Creating 'argocd' namespace ##########"
