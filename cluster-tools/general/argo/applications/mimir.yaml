@@ -26,7 +26,7 @@ spec:
     # Etcd
     - repoURL: registry-1.docker.io/bitnamicharts
       chart: etcd
-      targetRevision: v2
+      targetRevision: 12.0.20
       helm:
         valueFiles:
           - $values/cluster-tools/metrics/mimir/etcd/values.yaml
