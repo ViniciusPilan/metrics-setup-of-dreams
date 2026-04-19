@@ -26,8 +26,6 @@ defaultGarageImage: ""
 imagePullSecrets: []
 # -- Override the chart name
 nameOverride: ""
-# -- Override the full name
-fullnameOverride: ""
 
 serviceAccount:
   # -- Create a ServiceAccount
