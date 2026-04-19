@@ -679,7 +679,7 @@ plugins: []
 ## ref: http://docs.grafana.org/administration/provisioning/#datasources
 ##
 datasources:
-  apiVersion: 1
+  apiVersion: "1"
   datasources:
   - name: Prometheus
     type: prometheus
