@@ -57,10 +57,9 @@ global:
   # -- Common source of environment injections to add to all pods directly managed by this chart.
   # scope: alertmanager, compactor, continuous-test, distributor, gateway, ingester, memcached, nginx, overrides-exporter, querier, query-frontend, query-scheduler, ruler, store-gateway, smoke-test
   # For example to inject values from a Secret, use:
-  # extraEnvFrom:
-  #   - secretRef:
-  #       name: mysecret
-  extraEnvFrom: []
+  extraEnvFrom:
+    - secretRef:
+        name: mimir-key
 
   # -- Common volumes to add to all pods directly managed by this chart.
   # scope: alertmanager, compactor, continuous-test, distributor, gateway, ingester, memcached, nginx, overrides-exporter, querier, query-frontend, query-scheduler, ruler, store-gateway, smoke-test
@@ -348,18 +347,17 @@ mimir:
   #
   # Example:
   #
-  # structuredConfig:
-  #   common:
-  #     storage:
-  #       backend: s3
-  #       s3:
-  #         bucket_name: "${BUCKET_NAME}"
-  #         endpoint: "${BUCKET_HOST}:${BUCKET_PORT}"
-  #         access_key_id: "${AWS_ACCESS_KEY_ID}" # This is a secret injected via an environment variable
-  #         secret_access_key: "${AWS_SECRET_ACCESS_KEY}" # This is a secret injected via an environment variable
-  #         http:
-  #           insecure_skip_verify: true
-  structuredConfig: {}
+  structuredConfig:
+    common:
+      storage:
+        backend: s3
+        s3:
+          bucket_name: mimir-metrics
+          endpoint: "${BUCKET_HOST}:${BUCKET_PORT}"
+          access_key_id: "${AWS_ACCESS_KEY_ID}" # This is a secret injected via an environment variable
+          secret_access_key: "${AWS_SECRET_ACCESS_KEY}" # This is a secret injected via an environment variable
+          http:
+            insecure_skip_verify: true
 
 # -- runtimeConfig provides a reloadable runtime configuration. Changing the runtimeConfig doesn't require a restart of all components.
 # For more infromation see https://grafana.com/docs/mimir/latest/configure/about-runtime-configuration/
@@ -3030,25 +3028,7 @@ rollout_operator:
     allowPrivilegeEscalation: false
 
 minio:
-  enabled: true
-  mode: standalone
-  rootUser: grafana-mimir
-  buckets:
-    - name: mimir-tsdb
-      policy: none
-      purge: false
-    - name: mimir-ruler
-      policy: none
-      purge: false
-  persistence:
-    size: 5Gi
-  resources:
-    requests:
-      cpu: 100m
-      memory: 128Mi
-  rootPassword: supersecret
-  # Changed the mc config path to '/tmp' from '/etc' as '/etc' is only writable by root and OpenShift will not permit this.
-  configPathmc: "/tmp/minio/mc/"
+  enabled: false
 
 kafka:
   # -- Enable Kafka for ingest-storage architecture
