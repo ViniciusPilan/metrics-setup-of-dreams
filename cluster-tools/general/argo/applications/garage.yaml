@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: garage
+  namespace: argocd
+spec:
+  project: default
+
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: cluster-general-tools
+
+  sources:
+    - repoURL: https://github.com/ViniciusPilan/metrics-setup-of-dreams.git
+      targetRevision: v1
+      ref: values
+
+    # Garage
+    - repoURL: 'https://git.deuxfleurs.fr/Deuxfleurs/garage.git'
+      targetRevision: main-v2
+      path: script/helm/garage
+      helm:
+        # releaseName: garage
+        valueFiles:
+          - $values/cluster-tools/general/garage/values.yaml

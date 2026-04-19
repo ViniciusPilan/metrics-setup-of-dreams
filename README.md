@@ -5,7 +5,7 @@ https://github.com/ViniciusPilan/metrics-setup-of-dreams
 - [x] ArgoCD 
 - [ ] Poppeye
 - [ ] NGINX
-- [ ] Minio
+- [ ] Garage
 - [ ] Srimzi
 
 ### Monitoring and Observability
@@ -26,7 +26,7 @@ https://github.com/ViniciusPilan/metrics-setup-of-dreams
 - [ ] NGINX
 
 ## Next steps
-1. Minio
+1. Garage
 2. Etcd
 3. Strimzi
 4. Kafka

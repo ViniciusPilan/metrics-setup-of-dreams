@@ -8,7 +8,7 @@ spec:
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: metrics
+    namespace: general
 
   sources:
     - repoURL: https://github.com/ViniciusPilan/metrics-setup-of-dreams.git
