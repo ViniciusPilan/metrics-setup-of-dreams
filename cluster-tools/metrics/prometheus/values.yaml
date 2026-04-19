@@ -1,5 +1,9 @@
 fullnameOverride: "prometheus"
 
+global:
+  rbac:
+    create: true
+
 prometheus:
   enabled: true
 
