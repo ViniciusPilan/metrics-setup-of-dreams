@@ -16,22 +16,12 @@ spec:
       ref: values
     
     # Mimir
-    # - repoURL: https://grafana.github.io/helm-charts
-    #   chart: mimir-distributed
-    #   targetRevision: 6.0.6
-    #   helm:
-    #     valueFiles:
-    #       - $values/cluster-tools/metrics/mimir/values.yaml
-
-    # Etcd
-    - repoURL: registry-1.docker.io/bitnamicharts
-      chart: etcd
-      targetRevision: 12.0.18
+    - repoURL: https://grafana.github.io/helm-charts
+      chart: mimir-distributed
+      targetRevision: 6.0.6
       helm:
         valueFiles:
-          - $values/cluster-tools/metrics/mimir/etcd/values.yaml
-
-    # Kakfa
+          - $values/cluster-tools/metrics/mimir/values.yaml
 
   syncPolicy:
     # automated:
