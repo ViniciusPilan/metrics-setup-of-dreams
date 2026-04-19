@@ -16,30 +16,8 @@ image:
   # -- Overrides the image tag (default is the chart appVersion)
   tag: ""
 
-# -- Default Garage container image for clusters that don't specify one.
-# When set, all GarageCluster/GarageNode CRs that omit spec.image will use this image.
-# Useful for environments that can only pull from a specific registry.
-# Example: "registry.example.com/garage:v2.2.0"
-defaultGarageImage: ""
-
-# -- Image pull secrets for private registries
-imagePullSecrets: []
-# -- Override the chart name
-nameOverride: ""
-
 serviceAccount:
-  # -- Create a ServiceAccount
   create: true
-  # -- Annotations to add to the ServiceAccount
-  annotations: {}
-  # -- ServiceAccount name (generated if not set and create is true)
-  name: ""
-
-# -- Pod annotations
-podAnnotations: {}
-
-# -- Pod labels
-podLabels: {}
 
 # Pod security context
 podSecurityContext:
@@ -131,18 +109,12 @@ grafanaDashboard:
   # -- Labels added to the ConfigMap. Set to match your Grafana sidecar's discovery label.
   labels:
     grafana_dashboard: "1"
-  # -- Namespace to create the ConfigMap in (defaults to release namespace).
-  namespace: ""
 
 # PrometheusRules for alerting on GarageCluster health
 prometheusRules:
   # -- Create PrometheusRule resources with Garage alerting rules.
   # Requires prometheus-operator to be installed.
   enabled: false
-  # -- Additional labels added to PrometheusRule metadata
-  labels: {}
-  # -- Namespace to create PrometheusRule in (defaults to release namespace)
-  namespace: ""
 
 # Network policy configuration
 networkPolicy:
@@ -153,42 +125,6 @@ networkPolicy:
     matchLabels:
       metrics: enabled
 
-# Webhook configuration (requires cert-manager)
-webhooks:
-  # -- Enable admission webhooks
-  enabled: false
-  # -- Failure policy for webhooks (Fail or Ignore)
-  failurePolicy: Fail
-  # Certificate configuration for webhooks
-  certManager:
-    # -- Use cert-manager for webhook certificates
-    enabled: true
-    # -- Duration of webhook certificates
-    duration: 8760h  # 1 year
-    # -- Renew certificates before expiry
-    renewBefore: 720h  # 30 days
-    # -- Issuer kind (Issuer or ClusterIssuer)
-    issuerKind: Issuer
-    # -- Issuer name (creates self-signed if empty)
-    issuerName: ""
-
-# Node selector for operator pods
-nodeSelector: {}
-
-# Tolerations for operator pods
-tolerations: []
-
-# Affinity rules for operator pods
-affinity: {}
-
-# -- Pod topology spread constraints
-topologySpreadConstraints: []
-
-# -- Priority class name
-priorityClassName: ""
-
-# -- Termination grace period in seconds
-terminationGracePeriodSeconds: 10
 
 # CRD installation
 crds:
@@ -196,8 +132,6 @@ crds:
   install: true
   # -- Keep CRDs on chart uninstall
   keep: true
-  # -- Annotations for CRDs
-  annotations: {}
 
 # RBAC configuration
 rbac:
@@ -211,50 +145,35 @@ rbac:
 # Maps to --zap-log-level flag (controller-runtime zap logger).
 logLevel: info
 
-# -- Kubernetes cluster domain used for service FQDNs.
-# Override when your cluster uses a custom domain (e.g., eu-cluster.local, as-cluster.local).
-clusterDomain: cluster.local
-
-# Namespace scoping
-# -- List of namespaces to watch (empty means all namespaces, cluster-scoped).
-# When set, the operator only watches the listed namespaces (plus the release namespace)
-# and uses namespace-scoped Roles instead of ClusterRoles.
-# CRDs must still be installed by a cluster admin.
-watchNamespaces: []
-# -- Force cluster-wide watching even when watchNamespaces is set.
-# Only meaningful when watchNamespaces is non-empty; otherwise has no effect.
-watchAnyNamespace: false
-
-# COSI (Container Object Storage Interface) driver configuration
-cosi:
-  # -- Enable COSI driver for Kubernetes-native object storage provisioning
-  enabled: false
-  # -- COSI driver name (must match BucketClass/BucketAccessClass driverName)
-  driverName: garage.rajsingh.info
-  # -- COSI socket path
-  socketPath: /var/lib/cosi/cosi.sock
-  # -- Namespace for shadow resources (defaults to release namespace)
-  namespace: ""
-  # COSI sidecar configuration
-  sidecar:
-    # -- COSI sidecar image (from gcr.io/k8s-staging-sig-storage)
-    image: gcr.io/k8s-staging-sig-storage/objectstorage-sidecar:latest
-    # -- COSI sidecar image pull policy
-    pullPolicy: IfNotPresent
-    # -- Resource requests and limits for sidecar
-    resources:
-      limits:
-        cpu: 100m
-        memory: 64Mi
-      requests:
-        cpu: 10m
-        memory: 32Mi
-
 # -- Extra Kubernetes objects to deploy with the chart (supports templating)
-extraObjects: []
-# - apiVersion: v1
-#   kind: Secret
-#   metadata:
-#     name: garage-rpc-secret
-#   stringData:
-#     rpc-secret: "{{ .Values.myRpcSecret }}"
+extraObjects: 
+  - apiVersion: garage.rajsingh.info/v1alpha1
+    kind: GarageCluster
+    metadata:
+      name: garage-cluster
+    spec:
+      replicas: 3
+      zone: us-east-1
+      storage:
+        data:
+          size: 10Gi
+
+  - apiVersion: garage.rajsingh.info/v1alpha1
+    kind: GarageBucket
+    metadata:
+      name: mimir-metrics
+    spec:
+      clusterRef:
+        name: garage-cluster
+
+  - apiVersion: garage.rajsingh.info/v1alpha1
+    kind: GarageKey
+    metadata:
+      name: mimir-key
+    spec:
+      clusterRef:
+        name: garage-cluster
+      bucketPermissions:
+        - bucketRef: mimir-metrics
+          read: true
+          write: true
