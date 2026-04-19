@@ -20,6 +20,5 @@ spec:
       targetRevision: main-v2
       path: script/helm/garage
       helm:
-        # releaseName: garage
         valueFiles:
           - $values/cluster-tools/general/garage/values.yaml
