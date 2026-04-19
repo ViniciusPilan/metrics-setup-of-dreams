@@ -21,7 +21,7 @@ spec:
                 - yaml
                 - --force-exit-zero
                 - --push-gtwy-url
-                - http://push-gateway.metrics.svc:9090
+                - http://push-gateway.metrics.svc:9091/metrics/job/popeye
               resources:
                 limits:
                   cpu:    500m
