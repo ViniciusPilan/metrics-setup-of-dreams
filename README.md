@@ -20,6 +20,7 @@ https://github.com/ViniciusPilan/metrics-setup-of-dreams
     - [ ] ETCD
 - [ ] Loki
 - [ ] PushGateway
+- [ ] BlackBox Exporter
 
 ### App
 - [ ] NGINX
@@ -34,4 +35,6 @@ https://github.com/ViniciusPilan/metrics-setup-of-dreams
 7. Poppeye
 8. PushGateway
 9. Alertmanager
-10. Dashboards
+10. NGINX
+11. BlackBox exporter 
+12. Dashboards
