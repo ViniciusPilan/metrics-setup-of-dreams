@@ -5,7 +5,7 @@ https://github.com/ViniciusPilan/metrics-setup-of-dreams
 - [x] ArgoCD 
 - [ ] Poppeye
 - [ ] NGINX
-- [ ] Garage
+- [x] Garage
 - [ ] Srimzi
 
 ### Monitoring and Observability
@@ -15,9 +15,8 @@ https://github.com/ViniciusPilan/metrics-setup-of-dreams
 - [x] Grafana
 - [x] KubeStateMetrics
 - [ ] Alertmanager
-- [ ] Mimir
+- [x] Mimir
     - [ ] Kafka
-    - [ ] ETCD
 - [ ] Loki
 - [ ] PushGateway
 - [ ] BlackBox Exporter
@@ -26,15 +25,12 @@ https://github.com/ViniciusPilan/metrics-setup-of-dreams
 - [ ] NGINX
 
 ## Next steps
-1. Garage
-2. Etcd
-3. Strimzi
-4. Kafka
-5. Mimir
-6. Loki
-7. Poppeye
-8. PushGateway
-9. Alertmanager
-10. NGINX
-11. BlackBox exporter 
-12. Dashboards
+1. Strimzi
+2. Kafka
+4. Poppeye
+5. PushGateway
+3. Loki
+6. Alertmanager
+7. NGINX
+8. BlackBox exporter 
+9. Dashboards
