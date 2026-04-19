@@ -679,13 +679,14 @@ plugins: []
 ## ref: http://docs.grafana.org/administration/provisioning/#datasources
 ##
 datasources:
-  apiVersion: "1"
-  datasources:
-  - name: Prometheus
-    type: prometheus
-    url: http://prometheus-prometheus
-    access: proxy
-    isDefault: true
+ datasources.yaml:
+   apiVersion: 1
+   datasources:
+   - name: Prometheus
+     type: prometheus
+     url: http://prometheus-prometheus-server
+     access: proxy
+     isDefault: true
 
 ## Configure grafana alerting (can be templated)
 ## ref: https://docs.grafana.com/alerting/set-up/provision-alerting-resources/file-provisioning/
