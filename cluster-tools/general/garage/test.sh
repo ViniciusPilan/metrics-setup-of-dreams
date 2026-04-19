@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# kubectl port-forward svc/garage-cluster 3900 -n cluster-general-tools
+
 AWS_ACCESS_KEY_ID=$(kubectl get secret mimir-key -o jsonpath='{.data.access-key-id}' | base64 -d)
 AWS_SECRET_ACCESS_KEY=$(kubectl get secret mimir-key -o jsonpath='{.data.secret-access-key}' | base64 -d)
 AWS_DEFAULT_REGION=$(kubectl get secrets mimir-key -o yaml | yq .data.region | base64 -d)
