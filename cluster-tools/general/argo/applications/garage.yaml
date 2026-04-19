@@ -16,7 +16,7 @@ spec:
       ref: values
 
     # Garage
-    - repoURL: ghcr.io/rajsinghtech/charts/
+    - repoURL: ghcr.io/rajsinghtech/charts
       chart: garage-operator
       targetRevision: 0.3.8
       helm:
