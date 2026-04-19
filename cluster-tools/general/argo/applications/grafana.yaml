@@ -22,7 +22,7 @@ spec:
       helm:
         releaseName: grafana
         valueFiles:
-          - $values/grafana/values.yaml
+          - $values/cluster-tools/metrics/grafana/values.yaml
 
   syncPolicy:
     # automated:

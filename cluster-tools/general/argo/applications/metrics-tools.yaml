@@ -21,8 +21,8 @@ spec:
       targetRevision: 83.6.0
       helm:
         valueFiles:
-          - $values/prometheus/base.yaml
-          - $values/prometheus/values.yaml
+          - $values/cluster-tools/metrics/prometheus/base.yaml
+          - $values/cluster-tools/metrics/prometheus/values.yaml
 
     # Prometheus Operator
     - repoURL: ghcr.io/prometheus-community/charts
@@ -31,8 +31,8 @@ spec:
       helm:
         # releaseName: prometheus
         valueFiles:
-          - $values/prometheus-operator/base.yaml
-          - $values/prometheus-operator/values.yaml
+          - $values/cluster-tools/metrics/prometheus-operator/base.yaml
+          - $values/cluster-tools/metrics/prometheus-operator/values.yaml
 
     # Kube state metrics
 

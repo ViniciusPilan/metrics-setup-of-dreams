@@ -21,7 +21,7 @@ spec:
       targetRevision: 6.0.6
       helm:
         valueFiles:
-          - $values/mimir/values.yaml
+          - $values/cluster-tools/metrics/mimir/values.yaml
 
     # Minio
 

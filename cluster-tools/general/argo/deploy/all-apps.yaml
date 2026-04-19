@@ -13,7 +13,7 @@ spec:
   sources:
     - repoURL: https://github.com/ViniciusPilan/metrics-setup-of-dreams.git
       targetRevision: v1
-      path: argo/applications
+      path: cluster-tools/general/argo/applications
     
   syncPolicy:
     automated:
