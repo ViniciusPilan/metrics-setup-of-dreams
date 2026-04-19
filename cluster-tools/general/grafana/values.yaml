@@ -501,6 +501,7 @@ initChownData:
     capabilities:
       add:
         - CHOWN
+        # https://github.com/grafana/helm-charts/issues/752
         - DAC_OVERRIDE
       drop:
         - ALL
