@@ -6,6 +6,8 @@
 # -- Number of operator replicas (typically 1 with leader election)
 replicaCount: 1
 
+fullnameOverride: "garage"
+
 image:
   # -- Container image repository
   repository: ghcr.io/rajsinghtech/garage-operator
