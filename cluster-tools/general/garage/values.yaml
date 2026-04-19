@@ -153,12 +153,22 @@ extraObjects:
       name: garage-cluster
     spec:
       replicas: 3
+      zone: us-east-1
       replication:
         factor: 3
-      zone: us-east-1
       storage:
         data:
-          size: 10Gi
+          size: 100Gi
+      network:
+        rpcBindPort: 3901
+        service:
+          type: ClusterIP
+      admin:
+        enabled: true
+        bindPort: 3903
+        adminTokenSecretRef:
+          name: garage-admin-token
+          key: admin-token
 
   - apiVersion: garage.rajsingh.info/v1alpha1
     kind: GarageBucket
@@ -167,6 +177,8 @@ extraObjects:
     spec:
       clusterRef:
         name: garage-cluster
+      quotas:
+        maxSize: 10Gi
 
   - apiVersion: garage.rajsingh.info/v1alpha1
     kind: GarageKey
