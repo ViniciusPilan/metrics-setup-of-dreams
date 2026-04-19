@@ -153,6 +153,8 @@ extraObjects:
       name: garage-cluster
     spec:
       replicas: 3
+      replication:
+        factor: 3
       zone: us-east-1
       storage:
         data:
