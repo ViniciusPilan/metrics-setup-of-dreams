@@ -688,6 +688,11 @@ datasources:
      type: prometheus
      url: http://prometheus-prometheus.metrics.svc:9090
      access: proxy
+     isDefault: false
+   - name: Mimir
+     type: prometheus
+     url: http://mimir-gateway.metrics.svc:8080
+     access: proxy
      isDefault: true
 
 ## Configure grafana alerting (can be templated)
