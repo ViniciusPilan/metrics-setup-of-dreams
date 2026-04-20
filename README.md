@@ -2,9 +2,11 @@
 
 This is my best approach for monitoring and observability tools in a Kubernetes cluster! :)
 
-Still in development! I hope some day it will be finished. 
+*Still in development! I hope some day it will be finished (and I hope to have RAM memory enough).*
 
 Repo: https://github.com/ViniciusPilan/metrics-setup-of-dreams
+
+---
 
 ## To do
 ### Tools (check list to do)
@@ -13,7 +15,7 @@ Repo: https://github.com/ViniciusPilan/metrics-setup-of-dreams
 - [x] Poppeye
 - [ ] NGINX
 - [x] Garage
-- [ ] Srimzi
+- [x] Srimzi
 - [ ] GatewayAPI
 
 #### Monitoring and Observability
@@ -24,14 +26,15 @@ Repo: https://github.com/ViniciusPilan/metrics-setup-of-dreams
 - [x] KubeStateMetrics
 - [ ] Alertmanager
 - [x] Mimir
-    - [ ] Kafka
+    - [x] Kafka
+    - [x] Kafka Exporter
 - [ ] Loki
 - [x] PushGateway
 - [ ] BlackBox Exporter
 - [ ] Dashboards
     - [ ] Prometheus
     - [ ] Node exporter
-    - [ ] Mimir
+    - [x] Mimir
     - [ ] Popeye
     - [ ] Grafana
     - [ ] BlackBox Exporter
@@ -40,12 +43,9 @@ Repo: https://github.com/ViniciusPilan/metrics-setup-of-dreams
 - [ ] NGINX
 
 ### Next steps
-1. Strimzi
-2. Kafka
-3. Loki
-4. Alertmanager
-5. NGINX
-6. BlackBox exporter 
-7. Dashboards
-8. Gateway API
----
+1. Loki
+2. Alertmanager
+3. NGINX
+4. BlackBox exporter 
+5. Dashboards
+6. Gateway API
