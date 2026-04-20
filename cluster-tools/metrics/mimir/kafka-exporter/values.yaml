@@ -123,7 +123,7 @@ readiness:
 prometheus:
   serviceMonitor:
     enabled: true
-    namespace: monitoring
+    namespace: metrics
     apiVersion: "monitoring.coreos.com/v1"
     interval: "30s"
     # If serviceMonitor is enabled and you want prometheus to automatically register
