@@ -30,12 +30,12 @@ spec:
       helm:
         # releaseName: grafana
         valueFiles:
-          - $values/cluster-tools/metrics/strimzi/values.yaml
+          - $values/cluster-tools/metrics/mimir/strimzi/values.yaml
 
     # Kafka
     - repoURL: https://github.com/ViniciusPilan/metrics-setup-of-dreams.git
       targetRevision: v1
-      path: cluster-tools/mimir/kafka
+      path: cluster-tools/metrics/mimir/kafka
 
   syncPolicy:
     # automated:
