@@ -3542,7 +3542,7 @@ metaMonitoring:
     # -- If enabled, Grafana dashboards are deployed
     enabled: true
     # -- Alternative namespace to create dashboards ConfigMaps in. They are created in the Helm release namespace by default.
-    namespace: null
+    namespace: cluster-general-tools
     # -- Annotations to add to the Grafana dashboard ConfigMap
     annotations:
       k8s-sidecar-target-directory: /tmp/dashboards/Mimir Dashboards
