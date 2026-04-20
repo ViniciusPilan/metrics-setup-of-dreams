@@ -16,7 +16,7 @@ hostAliases: []
 # Additional labels for deployment
 deploymentLabels: {}
 
-nameOverride: mimir-kafka-exporter
+nameOverride: kafka-exporter
 
 global:
   # To help compatibility with other charts which use global.imagePullSecrets.
