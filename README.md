@@ -17,7 +17,9 @@ Repo: https://github.com/ViniciusPilan/metrics-setup-of-dreams
 - [x] Garage
 - [x] Srimzi
 - [ ] GatewayAPI
-
+- [ ] Ferramenta de Container Image Registry pra cache interno de imagens de container
+- [ ] Imageswap
+ 
 #### Monitoring and Observability
 - [x] Prometheus Operator
 - [x] Prometheus
@@ -44,8 +46,10 @@ Repo: https://github.com/ViniciusPilan/metrics-setup-of-dreams
 
 ### Next steps
 1. Loki
-2. Alertmanager
+2. Gateway API
 3. NGINX
 4. BlackBox exporter 
 5. Dashboards
-6. Gateway API
+6. Alertmanager
+7. Ferramenta de Container Image Registry pra cache interno de imagens de container
+8. Imageswap
