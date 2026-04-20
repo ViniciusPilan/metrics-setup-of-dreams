@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: strimzi
+  namespace: argocd
+spec:
+  project: default
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cluster-general-tools
+
+  sources:
+    - repoURL: https://github.com/ViniciusPilan/metrics-setup-of-dreams.git
+      targetRevision: v1
+      ref: values
+
+    # Strimzi
+    - repoURL: quay.io/strimzi-helm
+      chart: strimzi-kafka-operator
+      targetRevision: 0.1.1
+      helm:
+        # releaseName: grafana
+        valueFiles:
+          - $values/cluster-tools/general/strimzi/values.yaml
+
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
