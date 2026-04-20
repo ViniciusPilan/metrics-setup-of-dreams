@@ -37,6 +37,15 @@ spec:
       targetRevision: v1
       path: cluster-tools/metrics/mimir/kafka
 
+    # Kafka Exporter
+    - repoURL: ghcr.io/prometheus-community/charts
+      chart: prometheus-kafka-exporter
+      targetRevision: 3.0.1
+      helm:
+        # releaseName: grafana
+        valueFiles:
+          - $values/cluster-tools/metrics/mimir/strimzi/values.yaml
+
   syncPolicy:
     # automated:
     #   prune: true
