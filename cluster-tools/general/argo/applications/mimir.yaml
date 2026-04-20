@@ -32,11 +32,6 @@ spec:
         valueFiles:
           - $values/cluster-tools/metrics/mimir/strimzi/values.yaml
 
-    # Kafka
-    - repoURL: https://github.com/ViniciusPilan/metrics-setup-of-dreams.git
-      targetRevision: v1
-      path: cluster-tools/metrics/mimir/kafka
-
     # Kafka Exporter
     - repoURL: ghcr.io/prometheus-community/charts
       chart: prometheus-kafka-exporter
