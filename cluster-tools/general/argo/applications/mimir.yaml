@@ -37,7 +37,7 @@ spec:
       chart: prometheus-kafka-exporter
       targetRevision: 3.0.1
       helm:
-        # releaseName: grafana
+        releaseName: mimir-kafka-exporter
         valueFiles:
           - $values/cluster-tools/metrics/mimir/kafka-exporter/values.yaml
 
