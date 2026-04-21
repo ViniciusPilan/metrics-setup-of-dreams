@@ -1,0 +1,38 @@
+crds:
+  enabled: false
+
+defaultRules:
+  create: false
+
+global:
+  rbac:
+    create: false
+
+windowsMonitoring:
+  enabled: false
+
+alertmanager:
+  enabled: false
+
+grafana:
+  enabled: false
+
+kubernetesServiceMonitors:
+  enabled: false
+
+kubeStateMetrics:
+  enabled: false
+
+nodeExporter:
+  enabled: false
+
+prometheusOperator:
+  enabled: false
+
+prometheus:
+  enabled: false
+
+thanosRuler:
+  enabled: false
+
+cleanPrometheusOperatorObjectNames: true
