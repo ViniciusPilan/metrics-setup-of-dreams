@@ -1,36 +1,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: metrics-tools
+  name: monitoring-tools
   namespace: argocd
 spec:
   project: default
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: metrics
+    namespace: monitoring
 
   sources:
     - repoURL: https://github.com/ViniciusPilan/metrics-setup-of-dreams.git
       targetRevision: v1
       ref: values
-
-    # Node exporter
-    - repoURL: ghcr.io/prometheus-community/charts
-      chart: prometheus-node-exporter
-      targetRevision: 4.53.1
-      helm:
-        valueFiles:
-          - $values/cluster-tools/metrics/node-exporter/values.yaml
-
-    # Prometheus
-    - repoURL: ghcr.io/prometheus-community/charts
-      chart: kube-prometheus-stack
-      targetRevision: 83.6.0
-      helm:
-        valueFiles:
-          - $values/cluster-tools/metrics/prometheus/base.yaml
-          - $values/cluster-tools/metrics/prometheus/values.yaml
 
     # Prometheus Operator
     - repoURL: ghcr.io/prometheus-community/charts
@@ -38,8 +21,15 @@ spec:
       targetRevision: 83.6.0
       helm:
         valueFiles:
-          - $values/cluster-tools/metrics/prometheus-operator/base.yaml
-          - $values/cluster-tools/metrics/prometheus-operator/values.yaml
+          - $values/cluster-tools/monitoring/prometheus-operator/values.yaml
+
+    # Prometheus
+    - repoURL: ghcr.io/prometheus-community/charts
+      chart: kube-prometheus-stack
+      targetRevision: 83.6.0
+      helm:
+        valueFiles:
+          - $values/cluster-tools/monitoring/prometheus/values.yaml
 
     # Kube state metrics
     - repoURL: ghcr.io/prometheus-community/charts
@@ -47,26 +37,16 @@ spec:
       targetRevision: 7.2.2
       helm:
         valueFiles:
-          - $values/cluster-tools/metrics/kube-state-metrics/values.yaml 
+          - $values/cluster-tools/monitoring/kube-state-metrics/values.yaml 
 
-    # # Pushgateway
-    # - repoURL: ghcr.io/prometheus-community/charts
-    #   chart: prometheus-pushgateway
-    #   targetRevision: 3.6.0
-    #   helm:
-    #     valueFiles:
-    #       - $values/cluster-tools/metrics/push-gateway/values.yaml
-
-    # Grafana Alloy
-
-    # Alertmanager
-
-    # BlackBox Exporter
-
+    # Node exporter
+    - repoURL: ghcr.io/prometheus-community/charts
+      chart: prometheus-node-exporter
+      targetRevision: 4.53.1
+      helm:
+        valueFiles:
+          - $values/cluster-tools/monitoring/node-exporter/values.yaml
 
   syncPolicy:
-    # automated:
-    #   prune: true
-    #   selfHeal: true
     syncOptions:
       - CreateNamespace=true

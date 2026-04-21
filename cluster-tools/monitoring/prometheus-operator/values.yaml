@@ -434,3 +434,35 @@ prometheusOperator:
       limits:
         cpu: 50m
         memory: 50Mi
+
+
+
+########## DO NOT EDIT
+defaultRules:
+  create: false
+
+windowsMonitoring:
+  enabled: false
+
+alertmanager:
+  enabled: false
+
+grafana:
+  enabled: false
+
+kubernetesServiceMonitors:
+  enabled: false
+
+kubeStateMetrics:
+  enabled: false
+
+nodeExporter:
+  enabled: false
+
+prometheus:
+  enabled: false
+
+thanosRuler:
+  enabled: false
+
+cleanPrometheusOperatorObjectNames: true
