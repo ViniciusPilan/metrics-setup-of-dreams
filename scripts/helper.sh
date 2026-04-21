@@ -1,8 +1,8 @@
 #!/bin/bash
 
 argo_admin_password=$(kubectl get secrets -n argocd argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d)
-grafana_user=$(kubectl get secrets grafana -n cluster-general-tools -o jsonpath='{.data.admin-user}' | base64 -d)
-grafana_password=$(kubectl get secrets grafana -n cluster-general-tools -o jsonpath='{.data.admin-password}' | base64 -d)
+grafana_user=$(kubectl get secrets grafana -n monitoring -o jsonpath='{.data.admin-user}' | base64 -d)
+grafana_password=$(kubectl get secrets grafana -n monitoring -o jsonpath='{.data.admin-password}' | base64 -d)
 
 
 echo "========================================================================="
