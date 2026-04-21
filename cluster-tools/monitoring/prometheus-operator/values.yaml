@@ -82,7 +82,7 @@ prometheusOperator:
       #   argocd.argoproj.io/hook: PreSync
 
     deployment:
-      enabled: false
+      enabled: true
 
       ## Number of replicas
       ##
