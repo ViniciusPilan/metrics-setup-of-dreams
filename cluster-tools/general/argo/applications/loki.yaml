@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: logging-tools
+  name: loki
   namespace: argocd
 spec:
   project: default
@@ -23,8 +23,6 @@ spec:
         # releaseName: grafana
         valueFiles:
           - $values/cluster-tools/logging/loki/values.yaml
-
-  # Loki
 
 
   syncPolicy:
