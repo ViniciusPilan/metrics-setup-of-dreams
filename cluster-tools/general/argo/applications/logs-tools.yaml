@@ -1,26 +1,32 @@
-# apiVersion: argoproj.io/v1alpha1
-# kind: Application
-# metadata:
-#   name: logs-tools
-#   namespace: argocd
-# spec:
-#   project: default
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: logging-tools
+  namespace: argocd
+spec:
+  project: default
 
-#   destination:
-#     server: https://kubernetes.default.svc
-#     namespace: metrics
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: logging
 
-#   sources:
-#     - repoURL: https://github.com/ViniciusPilan/metrics-setup-of-dreams.git
-#       targetRevision: v1
-#       ref: values
+  sources:
+    - repoURL: https://github.com/ViniciusPilan/metrics-setup-of-dreams.git
+      targetRevision: v1
+      ref: values
 
-#   # Loki
+    # Loki
+    - repoURL: grafana-community.github.io/helm-charts
+      chart: loki
+      targetRevision: 6.41.0
+      helm:
+        # releaseName: grafana
+        valueFiles:
+          - $values/cluster-tools/logging/loki/values.yaml
+
+  # Loki
 
 
-#   syncPolicy:
-#     # automated:
-#     #   prune: true
-#     #   selfHeal: true
-#     syncOptions:
-#       - CreateNamespace=true
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true

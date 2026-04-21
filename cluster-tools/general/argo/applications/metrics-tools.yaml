@@ -61,10 +61,6 @@ spec:
 
     # Alertmanager
 
-    # Node Exporter
-
-    # Push Gateway
-
     # BlackBox Exporter
 
 
