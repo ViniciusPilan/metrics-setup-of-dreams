@@ -17,7 +17,7 @@ spec:
 
     # Loki
     - repoURL: grafana-community.github.io/helm-charts
-      chart: loki
+      chart: grafana/loki
       targetRevision: 6.55.0
       helm:
         # releaseName: grafana
