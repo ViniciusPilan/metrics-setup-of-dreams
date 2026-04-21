@@ -97,9 +97,7 @@ commonLabels:
 
 ## Assign a nodeSelector if operating a hybrid cluster
 ##
-nodeSelector:
-  tier: monitoring
-  #  kubernetes.io/arch: amd64
+nodeSelector: {}
 
 tolerations:
   - effect: NoSchedule
