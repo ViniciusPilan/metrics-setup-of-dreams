@@ -1,48 +1,48 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: mimir
-  namespace: argocd
-spec:
-  project: default
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: mimir
+#   namespace: argocd
+# spec:
+#   project: default
 
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: metrics
+#   destination:
+#     server: https://kubernetes.default.svc
+#     namespace: metrics
 
-  sources:
-    - repoURL: https://github.com/ViniciusPilan/metrics-setup-of-dreams.git
-      targetRevision: v1
-      ref: values
+#   sources:
+#     - repoURL: https://github.com/ViniciusPilan/metrics-setup-of-dreams.git
+#       targetRevision: v1
+#       ref: values
     
-    # Mimir
-    - repoURL: https://grafana.github.io/helm-charts
-      chart: mimir-distributed
-      targetRevision: 6.0.6
-      helm:
-        valueFiles:
-          - $values/cluster-tools/metrics/mimir/values.yaml
+#     # Mimir
+#     - repoURL: https://grafana.github.io/helm-charts
+#       chart: mimir-distributed
+#       targetRevision: 6.0.6
+#       helm:
+#         valueFiles:
+#           - $values/cluster-tools/metrics/mimir/values.yaml
 
-    # Strimzi
-    - repoURL: quay.io/strimzi-helm
-      chart: strimzi-kafka-operator
-      targetRevision: 0.51.0
-      helm:
-        # releaseName: grafana
-        valueFiles:
-          - $values/cluster-tools/metrics/mimir/strimzi/values.yaml
+#     # Strimzi
+#     - repoURL: quay.io/strimzi-helm
+#       chart: strimzi-kafka-operator
+#       targetRevision: 0.51.0
+#       helm:
+#         # releaseName: grafana
+#         valueFiles:
+#           - $values/cluster-tools/metrics/mimir/strimzi/values.yaml
 
-    # Kafka Exporter
-    - repoURL: ghcr.io/prometheus-community/charts
-      chart: prometheus-kafka-exporter
-      targetRevision: 3.0.1
-      helm:
-        valueFiles:
-          - $values/cluster-tools/metrics/mimir/kafka-exporter/values.yaml
+#     # Kafka Exporter
+#     - repoURL: ghcr.io/prometheus-community/charts
+#       chart: prometheus-kafka-exporter
+#       targetRevision: 3.0.1
+#       helm:
+#         valueFiles:
+#           - $values/cluster-tools/metrics/mimir/kafka-exporter/values.yaml
 
-  syncPolicy:
-    # automated:
-    #   prune: true
-    #   selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
+#   syncPolicy:
+#     # automated:
+#     #   prune: true
+#     #   selfHeal: true
+#     syncOptions:
+#       - CreateNamespace=true

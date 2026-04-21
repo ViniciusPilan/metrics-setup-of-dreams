@@ -49,13 +49,13 @@ spec:
         valueFiles:
           - $values/cluster-tools/metrics/kube-state-metrics/values.yaml 
 
-    # Pushgateway
-    - repoURL: ghcr.io/prometheus-community/charts
-      chart: prometheus-pushgateway
-      targetRevision: 3.6.0
-      helm:
-        valueFiles:
-          - $values/cluster-tools/metrics/push-gateway/values.yaml
+    # # Pushgateway
+    # - repoURL: ghcr.io/prometheus-community/charts
+    #   chart: prometheus-pushgateway
+    #   targetRevision: 3.6.0
+    #   helm:
+    #     valueFiles:
+    #       - $values/cluster-tools/metrics/push-gateway/values.yaml
 
     # Grafana Alloy
 
