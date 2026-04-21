@@ -112,13 +112,21 @@ prometheusOperator:
       ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
       ##
       serviceAccount:
+        annotations: {}
+        automountServiceAccountToken: false
         create: true
+        name: ""
 
       ## Configuration for Prometheus operator Webhook service
       ##
       service:
         annotations: {}
         labels: {}
+        clusterIP: ""
+        ipDualStack:
+          enabled: false
+          ipFamilies: ["IPv6", "IPv4"]
+          ipFamilyPolicy: "PreferDualStack"
 
         ## Port to expose on each node
         ## Only used if service.type is 'NodePort'
@@ -127,7 +135,20 @@ prometheusOperator:
 
         nodePortTls: 31443
 
+        ## Additional ports to open for Prometheus operator Webhook service
+        ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#multi-port-services
+        ##
+        additionalPorts: []
 
+        ## Loadbalancer IP
+        ## Only use if service.type is "LoadBalancer"
+        ##
+        loadBalancerIP: ""
+        loadBalancerSourceRanges: []
+
+        ## Denotes if this Service desires to route external traffic to node-local or cluster-wide endpoints
+        ##
+        externalTrafficPolicy: Cluster
 
         ## Service type
         ## NodePort, ClusterIP, LoadBalancer
@@ -205,13 +226,13 @@ prometheusOperator:
 
       ## Resource limits & requests
       ##
-      resources:
-      limits:
-        cpu: 100m
-        memory: 100Mi
-      requests:
-        cpu: 100m
-        memory: 100Mi
+      resources: {}
+      # limits:
+      #   cpu: 200m
+      #   memory: 200Mi
+      # requests:
+      #   cpu: 100m
+      #   memory: 100Mi
 
       # Required for use in managed kubernetes clusters (such as AWS EKS) with custom CNI (such as calico),
       # because control-plane managed by AWS cannot communicate with pods' IP CIDR and admission webhooks are not working
@@ -221,9 +242,40 @@ prometheusOperator:
       ## Define which Nodes the Pods are scheduled on.
       ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
       ##
-      nodeSelector:
-        tier: monitoring
+      nodeSelector: {}
 
+      ## Tolerations for use with node taints
+      ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+      ##
+      tolerations: []
+      # - key: "key"
+      #   operator: "Equal"
+      #   value: "value"
+      #   effect: "NoSchedule"
+
+      ## Assign custom affinity rules to the prometheus operator
+      ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+      ##
+      affinity: {}
+        # nodeAffinity:
+        #   requiredDuringSchedulingIgnoredDuringExecution:
+        #     nodeSelectorTerms:
+        #     - matchExpressions:
+        #       - key: kubernetes.io/e2e-az-name
+        #         operator: In
+        #         values:
+        #         - e2e-az1
+      #         - e2e-az2
+      dnsConfig: {}
+        # nameservers:
+        #   - 1.2.3.4
+        # searches:
+        #   - ns1.svc.cluster-domain.example
+        #   - my.dns.search.suffix
+        # options:
+        #   - name: ndots
+        #     value: "2"
+        #   - name: edns0
       securityContext:
         fsGroup: 65534
         runAsGroup: 65534
@@ -242,6 +294,31 @@ prometheusOperator:
           drop:
             - ALL
 
+      ## If false then the user will opt out of automounting API credentials.
+      ##
+      automountServiceAccountToken: true
+
+    patch:
+      enabled: true
+      image:
+        registry: ghcr.io
+        repository: jkroepke/kube-webhook-certgen
+        tag: 1.8.1
+        sha: ""
+        pullPolicy: IfNotPresent
+      resources: {}
+      ## Provide a priority class name to the webhook patching job
+      ##
+      priorityClassName: ""
+      ttlSecondsAfterFinished: 60
+      annotations: {}
+      #   argocd.argoproj.io/hook: PreSync
+      #   argocd.argoproj.io/hook-delete-policy: HookSucceeded
+      podAnnotations: {}
+      nodeSelector: {}
+      affinity: {}
+      tolerations: []
+
       ## SecurityContext holds pod-level security attributes and common container settings.
       ## This defaults to non root user with uid 2000 and gid 2000. *v1.PodSecurityContext  false
       ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
@@ -252,12 +329,13 @@ prometheusOperator:
         runAsUser: 2000
         seccompProfile:
           type: RuntimeDefault
-
       ## Service account for Prometheus Operator Webhook Job Patch to use.
       ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
       ##
       serviceAccount:
         create: true
+        annotations: {}
+        automountServiceAccountToken: true
 
     # Security context for create job container
     createSecretJob:
@@ -277,14 +355,81 @@ prometheusOperator:
           drop:
           - ALL
 
+    # Use certmanager to generate webhook certs
+    certManager:
+      enabled: false
+      # self-signed root certificate
+      rootCert:
+        duration: ""  # default to be 5y
+        # -- Set the revisionHistoryLimit on the Certificate. See
+        # https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.CertificateSpec
+        # Defaults to nil.
+        revisionHistoryLimit:
+      admissionCert:
+        duration: ""  # default to be 1y
+        # -- Set the revisionHistoryLimit on the Certificate. See
+        # https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.CertificateSpec
+        # Defaults to nil.
+        revisionHistoryLimit:
+      # issuerRef:
+      #   name: "issuer"
+      #   kind: "ClusterIssuer"
+
+  ## Namespaces to scope the interaction of the Prometheus Operator and the apiserver (allow list).
+  ## This is mutually exclusive with denyNamespaces. Setting this to an empty object will disable the configuration
+  ##
+  namespaces: {}
+    # releaseNamespace: true
+    # additional:
+    # - kube-system
+
+  ## Namespaces not to scope the interaction of the Prometheus Operator (deny list).
+  ##
+  denyNamespaces: []
+
+  ## Filter namespaces to look for prometheus-operator custom resources
+  ##
+  alertmanagerInstanceNamespaces: []
+  alertmanagerConfigNamespaces: []
+  prometheusInstanceNamespaces: []
+  thanosRulerInstanceNamespaces: []
+
+  ## The clusterDomain value will be added to the cluster.peer option of the alertmanager.
+  ## Without this specified option cluster.peer will have value alertmanager-monitoring-alertmanager-0.alertmanager-operated:9094 (default value)
+  ## With this specified option cluster.peer will have value alertmanager-monitoring-alertmanager-0.alertmanager-operated.namespace.svc.cluster-domain:9094
+  ##
+  # clusterDomain: "cluster.local"
 
   networkPolicy:
+    ## Enable creation of NetworkPolicy resources.
+    ##
     enabled: false
 
+    ## Flavor of the network policy to use.
+    #  Can be:
+    #  * kubernetes for networking.k8s.io/v1/NetworkPolicy
+    #  * cilium     for cilium.io/v2/CiliumNetworkPolicy
+    flavor: kubernetes
+
+    # cilium:
+    #   egress:
+
+    ## match labels used in selector
+    # matchLabels: {}
+
+  ## Service account for Prometheus Operator to use.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+  ##
   serviceAccount:
     create: true
+    name: ""
+    automountServiceAccountToken: true
+    annotations: {}
 
-
+  # -- terminationGracePeriodSeconds for container lifecycle hook
+  terminationGracePeriodSeconds: 30
+  # -- Specify lifecycle hooks for the  controller
+  lifecycle: {}
   ## Configuration for Prometheus operator service
   ##
   service:
@@ -300,18 +445,49 @@ prometheusOperator:
   ## Only used if service.type is 'NodePort'
   ##
     nodePort: 30080
+
     nodePortTls: 30443
+
+  ## Additional ports to open for Prometheus operator service
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#multi-port-services
+  ##
+    additionalPorts: []
+
+  ## Loadbalancer IP
+  ## Only use if service.type is "LoadBalancer"
+  ##
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+
+    ## Denotes if this Service desires to route external traffic to node-local or cluster-wide endpoints
+    ##
+    externalTrafficPolicy: Cluster
+
+  ## Service type
+  ## NodePort, ClusterIP, LoadBalancer
+  ##
     type: ClusterIP
+
+    ## List of IP addresses at which the Prometheus server service is available
+    ## Ref: https://kubernetes.io/docs/concepts/services-networking/service/#external-ips
+    ##
+    externalIPs: []
 
   # ## Labels to add to the operator deployment
   # ##
   labels: {}
 
+  ## Annotations to add to the operator deployment
+  ##
+  annotations: {}
 
   ## Labels to add to the operator pod
   ##
   podLabels: {}
 
+  ## Annotations to add to the operator pod
+  ##
+  podAnnotations: {}
 
   ## Assign a podDisruptionBudget to the operator
   ##
@@ -346,6 +522,10 @@ prometheusOperator:
   ## Create EndpointSlice objects for kubelet targets.
   kubeletEndpointSliceEnabled: false
 
+  ## Extra arguments to pass to prometheusOperator
+  # https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/platform/operator.md
+  extraArgs: []
+  #  - --labels="cluster=talos-cluster"
 
   ## Create a servicemonitor for the operator
   ##
@@ -354,16 +534,62 @@ prometheusOperator:
     ##
     selfMonitor: true
 
+    ## Labels for ServiceMonitor
+    additionalLabels: {}
+
+    ## Scrape interval. If not set, the Prometheus default scrape interval is used.
+    ##
+    interval: ""
+
+    ## SampleLimit defines per-scrape limit on number of scraped samples that will be accepted.
+    ##
+    sampleLimit: 0
+
+    ## TargetLimit defines a limit on the number of scraped targets that will be accepted.
+    ##
+    targetLimit: 0
+
+    ## Per-scrape limit on number of labels that will be accepted for a sample. Only valid in Prometheus versions 2.27.0 and newer.
+    ##
+    labelLimit: 0
+
+    ## Per-scrape limit on length of labels name that will be accepted for a sample. Only valid in Prometheus versions 2.27.0 and newer.
+    ##
+    labelNameLengthLimit: 0
+
+    ## Per-scrape limit on length of labels value that will be accepted for a sample. Only valid in Prometheus versions 2.27.0 and newer.
+    ##
+    labelValueLengthLimit: 0
+
+    ## Scrape timeout. If not set, the Prometheus default scrape timeout is used.
+    scrapeTimeout: ""
+
+    ## Metric relabel configs to apply to samples before ingestion.
+    ##
+    metricRelabelings: []
+    # - action: keep
+    #   regex: 'kube_(daemonset|deployment|pod|namespace|node|statefulset).+'
+    #   sourceLabels: [__name__]
+
+    #   relabel configs to apply to samples before ingestion.
+    ##
+    relabelings: []
+    # - sourceLabels: [__meta_kubernetes_pod_node_name]
+    #   separator: ;
+    #   regex: ^(.*)$
+    #   targetLabel: nodename
+    #   replacement: $1
+    #   action: replace
 
   ## Resource limits & requests
   ##
-  resources:
-    limits:
-      cpu: 100m
-      memory: 100Mi
-    requests:
-      cpu: 100m
-      memory: 100Mi
+  resources: {}
+  # limits:
+  #   cpu: 200m
+  #   memory: 200Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 100Mi
 
   ## Operator Environment
   ##  env:
@@ -379,9 +605,40 @@ prometheusOperator:
   ## Define which Nodes the Pods are scheduled on.
   ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
   ##
-  nodeSelector:
-    tier: monitoring
+  nodeSelector: {}
 
+  ## Tolerations for use with node taints
+  ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+  ##
+  tolerations: []
+  # - key: "key"
+  #   operator: "Equal"
+  #   value: "value"
+  #   effect: "NoSchedule"
+
+  ## Assign custom affinity rules to the prometheus operator
+  ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+  ##
+  affinity: {}
+    # nodeAffinity:
+    #   requiredDuringSchedulingIgnoredDuringExecution:
+    #     nodeSelectorTerms:
+    #     - matchExpressions:
+    #       - key: kubernetes.io/e2e-az-name
+    #         operator: In
+    #         values:
+    #         - e2e-az1
+    #         - e2e-az2
+  dnsConfig: {}
+    # nameservers:
+    #   - 1.2.3.4
+    # searches:
+    #   - ns1.svc.cluster-domain.example
+    #   - my.dns.search.suffix
+    # options:
+    #   - name: ndots
+    #     value: "2"
+  #   - name: edns0
   securityContext:
     fsGroup: 65534
     runAsGroup: 65534
@@ -404,6 +661,37 @@ prometheusOperator:
       drop:
       - ALL
 
+  # Enable vertical pod autoscaler support for prometheus-operator
+  verticalPodAutoscaler:
+    enabled: false
+
+    # Recommender responsible for generating recommendation for the object.
+    # List should be empty (then the default recommender will generate the recommendation)
+    # or contain exactly one recommender.
+    # recommenders:
+    # - name: custom-recommender-performance
+
+    # List of resources that the vertical pod autoscaler can control. Defaults to cpu and memory
+    controlledResources: []
+    # Specifies which resource values should be controlled: RequestsOnly or RequestsAndLimits.
+    # controlledValues: RequestsAndLimits
+
+    # Define the max allowed resources for the pod
+    maxAllowed: {}
+    # cpu: 200m
+    # memory: 100Mi
+    # Define the min allowed resources for the pod
+    minAllowed: {}
+    # cpu: 200m
+    # memory: 100Mi
+
+    updatePolicy:
+      # Specifies minimal number of replicas which need to be alive for VPA Updater to attempt pod eviction
+      # minReplicas: 1
+      # Specifies whether recommended updates are applied when a Pod is started and whether recommended updates
+      # are applied during the life of a Pod. Possible values are "Off", "Initial", "Recreate", and "InPlaceOrRecreate".
+      updateMode: Recreate
+
   ## Prometheus-operator image
   ##
   image:
@@ -414,6 +702,21 @@ prometheusOperator:
     sha: ""
     pullPolicy: IfNotPresent
 
+  ## Prometheus image to use for prometheuses managed by the operator
+  ##
+  # prometheusDefaultBaseImage: prometheus/prometheus
+
+  ## Prometheus image registry to use for prometheuses managed by the operator
+  ##
+  # prometheusDefaultBaseImageRegistry: quay.io
+
+  ## Alertmanager image to use for alertmanagers managed by the operator
+  ##
+  # alertmanagerDefaultBaseImage: prometheus/alertmanager
+
+  ## Alertmanager image registry to use for alertmanagers managed by the operator
+  ##
+  # alertmanagerDefaultBaseImageRegistry: quay.io
 
   ## Prometheus-config-reloader
   ##
@@ -425,12 +728,49 @@ prometheusOperator:
       tag: ""
       sha: ""
 
+    # add prometheus config reloader liveness and readiness probe. Default: false
+    enableProbe: false
 
     # resource config for prometheusConfigReloader
-    resources:
-      requests:
-        cpu: 50m
-        memory: 50Mi
-      limits:
-        cpu: 50m
-        memory: 50Mi
+    resources: {}
+      # requests:
+      #   cpu: 200m
+      #   memory: 50Mi
+      # limits:
+      #   cpu: 200m
+      #   memory: 50Mi
+
+  ## Thanos side-car image when configured
+  ##
+  thanosImage:
+    registry: quay.io
+    repository: thanos/thanos
+    tag: v0.41.0
+    sha: ""
+
+  ## Set a Label Selector to filter watched prometheus and prometheusAgent
+  ##
+  prometheusInstanceSelector: ""
+
+  ## Set a Label Selector to filter watched alertmanager
+  ##
+  alertmanagerInstanceSelector: ""
+
+  ## Set a Label Selector to filter watched thanosRuler
+  thanosRulerInstanceSelector: ""
+
+  ## Set a Field Selector to filter watched secrets
+  ##
+  secretFieldSelector: "type!=kubernetes.io/dockercfg,type!=kubernetes.io/service-account-token,type!=helm.sh/release.v1"
+
+  ## If false then the user will opt out of automounting API credentials.
+  ##
+  automountServiceAccountToken: true
+
+  ## Additional volumes
+  ##
+  extraVolumes: []
+
+  ## Additional volume mounts
+  ##
+  extraVolumeMounts: []
