@@ -11,7 +11,7 @@ prometheusOperator:
   enabled: true
 
   ## Use '{{ template "kube-prometheus-stack.fullname" . }}-operator' by default
-  fullnameOverride: ""
+  fullnameOverride: prometheus-operator
 
   ## Number of old replicasets to retain ##
   ## The default value is 10, 0 will garbage-collect old replicasets ##
